@@ -105,7 +105,6 @@ fn main() -> Result<(), Box<dyn Error>> {
         .. Default::default()
     };
 
-
     let v_matrix = glm::translate(
         &glm::TMat4::identity(),
         &glm::vec3(0.0, 0.0, -3.5)
