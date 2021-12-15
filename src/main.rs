@@ -58,6 +58,13 @@ fn main() -> Result<(), Box<dyn Error>> {
         1, 2, 6, 1, 5, 6
     ];
 
+    let cube_positions: [[f32; 3]; 4] = [
+        [0.0, 0.0, 0.0],
+        [-2.0, 0.0, -2.0],
+        [1.0, 2.0, -4.0],
+        [3.0, -2.0, -5.0]
+    ];
+
     let vbo = VertexBuffer::new(&display, &cube)?;
     let ibuf = IndexBuffer::new(&display, PrimitiveType::TrianglesList, &indices)?;
 
@@ -143,19 +150,33 @@ fn main() -> Result<(), Box<dyn Error>> {
 
         target.clear_color_and_depth((0.0, 0.0, 0.0, 1.0), 1.0);
 
-        let m_matrix = glm::rotate(
-            &glm::TMat4::identity(),
-            theta,
-            &glm::vec3(0.0, 1.0, -1.0)
-        );
+        for (i, pos) in cube_positions.iter().enumerate() {
+            let mut m_matrix = glm::translate(
+                &glm::TMat4::identity(),
+                &glm::vec3(pos[0], pos[1], pos[2])
+            );
 
-        let model: [[f32; 4]; 4] = *m_matrix.as_ref();
-        let uniforms = uniform! { m: model, v: view, p: projection };
+            m_matrix = glm::rotate(
+                &m_matrix,
+                PI / 4.0 * (i as f32 * -55.0),
+                &glm::vec3(0.0, 0.0, -1.0)
+            );
 
-        target.draw(
-            &vbo, &ibuf, &program,
-            &uniforms, &draw_params
-        ).unwrap();
+            m_matrix = glm::rotate(
+                &m_matrix,
+                theta + (i as f32 * 17.0),
+                &glm::vec3(0.0, 1.0, 0.0)
+            );
+
+            let model: [[f32; 4]; 4] = *m_matrix.as_ref();
+
+            let uniforms = uniform! { m: model, v: view, p: projection };
+
+            target.draw(
+                &vbo, &ibuf, &program,
+                &uniforms, &draw_params
+            ).unwrap();
+        }
 
         target.finish().unwrap();
 
