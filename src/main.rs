@@ -30,7 +30,7 @@ fn main() -> Result<(), Box<dyn Error>> {
         .with_depth_buffer(24);
     let event_loop = EventLoop::new();
     let window = WindowBuilder::new()
-        .with_title("Eldritch Cube")
+        .with_title("Eldritch Cubes")
         .with_inner_size(LogicalSize::new(WIN_WIDTH, WIN_HEIGHT));
 
     let display = Display::new(window, context, &event_loop)?;
@@ -150,10 +150,10 @@ fn main() -> Result<(), Box<dyn Error>> {
 
         target.clear_color_and_depth((0.0, 0.0, 0.0, 1.0), 1.0);
 
-        for (i, pos) in cube_positions.iter().enumerate() {
+        for (i, [x, y, z]) in cube_positions.iter().enumerate() {
             let mut m_matrix = glm::translate(
                 &glm::TMat4::identity(),
-                &glm::vec3(pos[0], pos[1], pos[2])
+                &glm::vec3(*x, *y, *z)
             );
 
             m_matrix = glm::rotate(
